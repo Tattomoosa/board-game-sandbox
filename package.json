@@ -1,0 +1,16 @@
+{
+  "name": "board-game-sandbox",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Matt O'Tousa <matt@mattotousa.com>",
+  "license": "MIT",
+  "scripts": {
+    "client": "cd client && yarn serve",
+    "server": "cd server && yarn serve",
+    "shared": "cd shared && npm start",
+    "serve": "concurrently \"npm run client\" \"npm run server\" \"npm run shared\""
+  },
+  "dependencies": {
+    "concurrently": "^4.0.1"
+  }
+}
