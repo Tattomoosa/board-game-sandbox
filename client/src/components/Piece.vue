@@ -1,21 +1,26 @@
 <template>
-  <FreeTransform
-    :id="obj.id"
-    :x="obj.x"
-    :y="obj.y"
-    :scale-x="obj.scaleX"
-    :scale-y="obj.scaleY"
-    :width="obj.width"
-    :height="obj.height"
-    :angle="obj.angle"
-    :offset-x="obj.offsetX"
-    :offset-y="obj.offsetY"
-    @update="localUpdate(obj.id, $event)"
-  >
-    <div class="element" :style="{width: `100px`, height: `100px`, background: `red`}">
-      {{ obj.id }}
-    </div>
-  </FreeTransform>
+	<div v-if="obj != null">
+		<FreeTransform
+			:id="obj.id"
+			:x="obj.x"
+			:y="obj.y"
+			:scale-x="obj.scaleX"
+			:scale-y="obj.scaleY"
+			:width="obj.width"
+			:height="obj.height"
+			:angle="obj.angle"
+			:offset-x="obj.offsetX"
+			:offset-y="obj.offsetY"
+			:selectOn="'mousedown'"
+			:selected="obj.selected"
+			@onSelect="localSelect(obj.id, $event)"
+			@update="localUpdate(obj.id, $event)"
+		>
+			<div class="element" :style="{width: obj.width + 'px', height: obj.height + 'px', background: obj.color}">
+				{{ obj.id }}
+			</div>
+		</FreeTransform>
+	</div>
 </template>
 <script>
 import FreeTransform from 'vue-free-transform'
@@ -29,48 +34,34 @@ export default {
       this.serverUpdate(data)
     })
   },
-  data() {
-    // this gon have to change.
-    // probably have store pass an object right in
-    // from up above
-    return {
-      obj: {
-        id: 1,
-        color: 'blue',
-        x: 0,
-        y: 0,
-        scaleX: 1,
-        scaleY: 1,
-        width: 100,
-        height: 100,
-        angle: 0,
-        offsetX: 0,
-        offsetY: 0
-      }
-    }
-  },
+	computed: {
+		obj() {
+			return this.$store.state.pieces[this.$props.index]
+		}
+	},
   props: {
-    object: Object
+		index: Number,
+    object: Object,
   },
   methods: {
     update(e) {
-      this.obj = { ...this.obj, ...e }
+      // this.obj = { ...this.obj, ...e }
+			this.$store.commit('setPiece', { ...this.obj, ...e })
     },
     localUpdate(id, e) {
       this.update(e)
-      // ok so it got unhappy about me sending this.obj.id
-      // but apparently ...this.obj.id works just fine.
-      // didn't even know you could use spread syntax like that.
       this.$io.emit('edited', {id: this.obj.id, ...e})
     },
     serverUpdate(e) {
-      console.log({1: e.id, 2: this.obj.id})
+      // console.log({1: e.id, 2: this.obj.id})
       if (e.id === this.obj.id)
       {
-        // console.log('dragging ' + e.id)
         this.update(e)
       }
-    }
+    },
+		localSelect(id, e) {
+			this.$store.commit('selectPiece', {id: this.obj.id, ...e})
+		},
   }
 }
 </script>
@@ -93,13 +84,13 @@ $padding : $size/2;
 
     .tr-transform__rotator,
     .tr-transform__scale-point {
-        background: #fff;
+        background: rgba(255, 255, 255, 0.8);
         width: $size;
         height: $size;
         border-radius: 50%;
         position: absolute;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        // border: 1px solid rgba(255, 255, 255, 0.4);
         cursor: pointer;
     }
 
@@ -156,4 +147,7 @@ $padding : $size/2;
         left: calc(100% - 7px);
         top: calc(100% - 7px);
     }
+		.tr-transform__controls {
+			cursor: move;
+		}
 </style>

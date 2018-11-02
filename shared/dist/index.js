@@ -1,38 +1,99 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = void 0;
 
-var _vuex = require('vuex');
+var _vuex = _interopRequireDefault(require("vuex"));
 
-var _vuex2 = _interopRequireDefault(_vuex);
+var _vue = _interopRequireDefault(require("vue"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var defaultObject = function defaultObject(id) {
+// Spread operator isn't working TODO check if this is fixed now
+var defaultPiece = function defaultPiece(o) {
   return {
-    id: id,
-    color: 'blue',
-    x: 0,
-    y: 0,
-    scaleX: 1,
-    scaleY: 1,
-    width: 100,
-    height: 100,
-    angle: 0,
-    offsetX: 0,
-    offsetY: 0
+    id: o.id,
+    color: o.color || 'grey',
+    x: o.x || 0,
+    y: o.y || 0,
+    scaleX: o.scaleX || 1,
+    scaleY: o.scaleY || 1,
+    width: o.width || 100,
+    height: o.height || 100,
+    angle: o.angle || 0,
+    offsetX: o.offsetX || 0,
+    offsetY: o.offsetY || 0,
+    selected: false
   };
 };
-exports.default = {
+
+var _default = {
   // Don't want this to run until it's called because Vuex expects Vue.use(Vuex) before initializing the state
-  Vuex: _vuex2.default,
+  Vuex: _vuex.default,
+  Vue: _vue.default,
   createStore: function createStore() {
-    return new _vuex2.default.Store({
+    return new _vuex.default.Store({
       state: {
-        objects: [defaultObject(1)]
+        pieces: [],
+        activeUsers: {
+          /*
+           * [socket id] : {
+           *		id:
+           *		name:
+           *		etc...
+           * }
+           *
+          */
+        }
+      },
+      getters: {
+        localSelectedPiece: function localSelectedPiece(state) {
+          // let selectedPiece;
+          for (var i = 0; i < state.pieces.length; i++) {
+            if (state.pieces[i].selected == true) {
+              return state.pieces[i];
+            }
+          }
+        },
+        pieceWithId: function pieceWithId(state) {
+          return function (id) {
+            for (var i = 0; i < state.pieces.length; i++) {
+              if (state.pieces[i].id == id) {
+                return state.pieces[i];
+              }
+            }
+          };
+        }
+      },
+      mutations: {
+        loadState: function loadState(state, newPieces) {
+          state.pieces = newPieces;
+        },
+        setPiece: function setPiece(state, newPiece) {
+          _vue.default.set(state.pieces, newPiece.id, newPiece);
+        },
+        createPiece: function createPiece(state, piece) {
+          console.log('creating piece');
+          state.pieces.push(defaultPiece({
+            id: state.pieces.length
+          }));
+        },
+        deletePiece: function deletePiece(state, piece) {
+          for (var i = 0; i < state.pieces.length; i++) {
+            var p = state.pieces[i];
+            if (p.id == piece.id) state.pieces.splice(i, 1);
+          }
+        },
+        selectPiece: function selectPiece(state, piece) {
+          for (var i = 0; i < state.pieces.length; i++) {
+            var p = state.pieces[i];
+            if (p !== null) if (p.id == piece.id) p.selected = true;else p.selected = false;
+          }
+        }
       }
     });
   }
 };
+exports.default = _default;

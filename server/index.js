@@ -2,6 +2,11 @@ import _express from 'express'
 import _http from 'http'
 import _socketio from 'socket.io'
 import shared from '../shared/dist/index.js'
+import Vue from 'vue'
+// remove
+// import Vuex from 'vuex'
+
+// console.log(shared)
 
 let app = _express()
 let http = _http.Server(app)
@@ -17,18 +22,20 @@ app.get('/', function(req, res) {
 })
 */
 
+shared.Vue.use(shared.Vuex)
+
+const store = shared.createStore()
+
 io.on('connection', client => {
-  // client.id = _uuid()
   // Name is changeable
-  client.name = client.id
+  client.name = 'guest'
 
   console.log('user ' + client.id + ' connected')
-  // give client its id
 
+  // give client its id
   client.on('ready', () => {
-    client.to(client.id).emit('init client', {
-      id: client.id,
-    })
+		console.log('user ' + client.id + ' ready')
+		io.to(client.id).emit('init client', store.state.pieces)
   })
 
   client.on('disconnect', function() {
@@ -36,22 +43,29 @@ io.on('connection', client => {
   })
 
   client.on('edited', data => {
+		store.commit('setPiece', { ...store.getters.pieceWithId(data.id), ...data })
     client.broadcast.emit('edited', data)
-    console.log('updat1')
-    // shared()
   })
+
+	client.on('create piece', () => {
+		store.commit('createPiece')
+		io.emit('create piece')
+	})
+
+	client.on('delete piece', data => {
+		store.commit('deletePiece', data)
+		io.emit('delete piece', data)
+	})
 
   client.on('send message', (data) => {
     let { message } = data
-    if (message.startsWith(":"))
-    {
-      if (message.startsWith(":setname "))
-      {
-        let previousName = client.name
-        client.name = message.slice(9)
-        console.log(previousName + " is now known as " + client.name)
-        io.to(client.id).emit('namechange', { name: client.name })
-      }
+
+    if (message.startsWith("\\setname "))
+		{
+			let previousName = client.name
+			client.name = message.slice(9)
+			console.log(previousName + " is now known as " + client.name)
+			io.to(client.id).emit('namechange', { name: client.name })
     } else {
       io.emit('message', data)
       console.log(data.message)

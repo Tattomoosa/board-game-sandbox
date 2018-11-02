@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <div class="piece" v-for="(obj, index) in $store.state.objects" :key="index">
-      <Piece :object="obj" />
+		<input type="button" v-on:click="createPiece" value="+"></input>
+		<input type="button" v-on:click="deletePiece" value="x"></input>
+    <div class="piece" v-for="(piece, index) in $store.state.pieces" :key="index">
+      <!-- <Piece :object="obj" /> -->
+      <Piece :object="piece" :index="index" />
     </div>
     <Chat />
   </div>
@@ -22,8 +23,28 @@ export default {
     Piece
   },
   mounted() {
-    // console.log(this.$store.state)
-  }
+		this.$io.emit('ready')
+		this.$io.on('init client', newState => {
+			console.log('loading state from server')
+			this.$store.commit('loadState', newState)
+			this.$io.on('create piece', data => {
+				this.$store.commit('createPiece', data)
+			})
+			this.$io.on('delete piece', data => {
+				this.$store.commit('deletePiece', data)
+			})
+		})
+  },
+	methods: {
+		createPiece() {
+			this.$io.emit('create piece')
+		},
+		deletePiece() {
+			let selectedPiece = this.$store.getters.localSelectedPiece
+			// this.$store.commit('deletePiece', selectedPiece)
+			this.$io.emit('delete piece', selectedPiece)
+		}
+	}
 }
 </script>
 
