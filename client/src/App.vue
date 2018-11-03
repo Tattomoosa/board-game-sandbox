@@ -24,14 +24,32 @@ export default {
   },
   mounted() {
 		this.$io.emit('ready')
-		this.$io.on('init client', newState => {
+		this.$io.on('init client', data => {
 			console.log('loading state from server')
-			this.$store.commit('loadState', newState)
+			this.$store.commit('loadPieces', data.pieces)
+			this.$store.commit('loadMessages', data.messages)
+			this.$store.commit('updateUsers', data.users)
+			this.$store.commit('setLocalUser', data.clientId)
+			console.log(this.$store.state.localUser)
+
+			// set up server message responses.
+			this.$io.on('user connected', users => {
+				this.$store.commit('updateUsers', users)
+			})
+			this.$io.on('user disconnected', users => {
+				this.$store.commit('updateUsers', users)
+			})
+			// TODO: move these to some other place ('Board', 'Workspace'?)
 			this.$io.on('create piece', data => {
 				this.$store.commit('createPiece', data)
 			})
 			this.$io.on('delete piece', data => {
 				this.$store.commit('deletePiece', data)
+			})
+			this.$io.on('reset client', data => {
+				this.$store.commit('loadPieces', data.pieces)
+				this.$store.commit('loadMessages', data.messages)
+				this.$store.commit('updateUsers', data.users)
 			})
 		})
   },

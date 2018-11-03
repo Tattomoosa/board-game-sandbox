@@ -29,17 +29,28 @@ const store = shared.createStore()
 io.on('connection', client => {
   // Name is changeable
   client.name = 'guest'
-
-  console.log('user ' + client.id + ' connected')
+	console.log('user ' + client.id + ' connected')
+	store.commit('addUser', client.id)
+	client.broadcast.emit('user connected', store.state.users)
 
   // give client its id
   client.on('ready', () => {
 		console.log('user ' + client.id + ' ready')
-		io.to(client.id).emit('init client', store.state.pieces)
+
+		io.to(client.id).emit('init client',
+			{
+				pieces: store.state.pieces,
+				clientId: client.id,
+				users: store.state.users,
+				messages: store.state.messages
+			}
+		)
   })
 
   client.on('disconnect', function() {
     console.log('user ' + client.id + ' disconnected')
+		store.commit('removeUser', client.id)
+		client.broadcast.emit('user disconnected', store.state.users)
   })
 
   client.on('edited', data => {
@@ -57,39 +68,34 @@ io.on('connection', client => {
 		io.emit('delete piece', data)
 	})
 
+	function resetClient() {
+		io.emit('reset client',
+			{
+				pieces: store.state.pieces,
+				users: store.state.users,
+				messages: store.state.messages
+			}
+		)
+	}
+
   client.on('send message', (data) => {
     let { message } = data
 
     if (message.startsWith("\\setname "))
 		{
-			let previousName = client.name
-			client.name = message.slice(9)
-			console.log(previousName + " is now known as " + client.name)
-			io.to(client.id).emit('namechange', { name: client.name })
-    } else {
+			// CHANGE NAME
+			let name = message.slice(9)
+			store.commit('changeUsername', {name, clientId: client.id})
+			// TODO we really only need to update the user's name
+			resetClient()
+		}
+		else if (message.startsWith("\\resetclient"))
+			resetClient()
+    else {
+			store.commit('addMessage', data)
       io.emit('message', data)
-      console.log(data.message)
     }
   })
-
-    /*
-  client.on('chat message', function(message) {
-    console.log('message: ' + message)
-    if (message.startsWith("\\setname ")) {
-      let previous_name = client.name
-      client.name = message.slice(9)
-      io.emit('chat message', '// ' + previous_name + ' has changed their name to ' + client.name)
-    }
-    else
-      io.emit('chat message', '[' + client.name +'] : ' + message)
-  })
-
-  client.on('on drag', function(draggable) {
-    console.log('draggable\nid: ' + draggable.id + '\n x: ' + draggable.x + ', y: ' + draggable.y)
-    io.emit('on drag', draggable)
-  })
-  */
-
 })
 
 http.listen(PORT, function() {

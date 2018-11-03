@@ -4,8 +4,8 @@
     <input type="button" class="show-chat-button" value="Hide" v-on:click="active=!active"></input>
     <div class="chat-scroll">
       <div class="message" v-for="(msg, index) in messages" :key="index">
-        <span class="username">
-          [ {{ msg.username }} ]
+        <span v-if="users[msg.socketId]"class="username">
+          [ {{ users[msg.socketId].name }} ]
         </span>
         {{ msg.message }}
       </div>
@@ -26,25 +26,37 @@ export default {
   name: 'Chat',
   data() {
     return {
-      username: 'guest',
       message: '',
-      messages: [],
       active: true
     }
   },
   mounted() {
     this.$io.on('message', data => {
-      this.messages.push(data)
+      // this.messages.push(data)
+			this.$store.commit('addMessage', data)
     })
+/*
     this.$io.on('namechange', data => {
       // this.messages.push(data)
       this.username = data.name
     })
+*/
   },
+	computed: {
+		messages() {
+			return this.$store.state.messages
+		},
+		users() {
+			return this.$store.state.users
+		},
+		username() {
+			return this.$store.state.users[this.$store.state.localUser].name
+		}
+	},
   methods: {
     sendMessage(e) {
       this.$io.emit('send message', {
-        username: this.username,
+				socketId: this.$store.state.localUser,
         message: this.message
       })
       this.message = ''
