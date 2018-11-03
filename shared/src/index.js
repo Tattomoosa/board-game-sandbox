@@ -90,7 +90,7 @@ export default {
 				},
 				currentUser: state => {
 					return state.users[localUser]
-				}
+        },
 			},
 			mutations: {
 				loadPieces (state, newPieces) {
@@ -171,6 +171,9 @@ export default {
 				addMessage (state, message) {
 					state.messages.push(message)
 				},
+        clearChat (state) {
+          state.messages = []
+        }
 			},
 		})
 	}

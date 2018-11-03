@@ -45,6 +45,10 @@ export default {
 			})
 			this.$io.on('delete piece', data => {
 				this.$store.commit('deletePiece', data)
+        // This fixes a strange rotation bug but there's probably a better way
+        // TODO: find the better way
+        if (this.$store.state.pieces.length < 1)
+          this.$io.emit('send message', {message: '\\resetclient'})
 			})
 			this.$io.on('select piece', data => {
 				this.$store.commit('selectPiece', data)

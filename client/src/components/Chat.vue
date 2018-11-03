@@ -4,10 +4,15 @@
     <input type="button" class="show-chat-button" value="Hide" v-on:click="active=!active"></input>
     <div class="chat-scroll">
       <div class="message" v-for="(msg, index) in messages" :key="index">
-        <span v-if="users[msg.socketId]"class="username">
-          [ {{ users[msg.socketId].name }} ]
-        </span>
-        {{ msg.message }}
+        <div v-if="users[msg.socketId]" class="username">
+          {{ users[msg.socketId].name }}
+        </div>
+        <div v-else class="username">
+          Server Message
+        </div>
+        <div class="contents">
+          {{ msg.message }}
+        </div>
       </div>
     </div>
     <div class="chat-form">
@@ -129,6 +134,18 @@ $width: 300px;
     padding: 4px;
     background: #efefef;
     font-size: 14px;
+
+    .username {
+      font-weight: bold;
+      color: slategrey;
+      font-size: 10px;
+      padding-bottom: 8px;
+    }
+    .contents {
+      font-size: 12px;
+      margin-left: 20px;
+      padding-bottom: 4px;
+    }
   }
   .message:nth-child(2n) {
     background: lightgrey;
@@ -146,4 +163,5 @@ $width: 300px;
   background: lightgrey;
   padding: 4px 0 ;
 }
+
 </style>

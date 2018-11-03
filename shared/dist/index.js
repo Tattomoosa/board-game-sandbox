@@ -189,6 +189,9 @@ var _default = {
         },
         addMessage: function addMessage(state, message) {
           state.messages.push(message);
+        },
+        clearChat: function clearChat(state) {
+          state.messages = [];
         }
       }
     });

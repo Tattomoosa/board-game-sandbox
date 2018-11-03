@@ -56,9 +56,7 @@ export default {
     serverUpdate(e) {
       // console.log({1: e.id, 2: this.obj.id})
       if (e.id === this.obj.id)
-      {
         this.update(e)
-      }
     },
 		localSelect(id, e) {
 			this.$store.commit('localSelectPiece', {id: this.obj.id, ...e})

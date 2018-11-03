@@ -5,10 +5,14 @@
   "author": "Matt O'Tousa <matt@mattotousa.com>",
   "license": "MIT",
   "scripts": {
-    "client": "cd client && yarn serve",
-    "server": "cd server && yarn serve",
+    "client": "cd client && npm run serve",
+    "installclient": "cd client && npm i",
+    "server": "cd server && npm run serve",
+    "installserver": "cd server && npm i",
     "shared": "cd shared && npm start",
-    "serve": "concurrently \"npm run client\" \"npm run server\" \"npm run shared\""
+    "installshared": "cd shared && npm i",
+    "serve": "concurrently \"npm run client\" \"npm run server\" \"npm run shared\"",
+    "installall": "npm run installclient && npm run installserver && npm run installshared"
   },
   "dependencies": {
     "concurrently": "^4.0.1"
