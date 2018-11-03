@@ -17,7 +17,8 @@
 			@update="localUpdate(obj.id, $event)"
 		>
 			<div class="element" :style="{width: obj.width + 'px', height: obj.height + 'px', background: obj.color}">
-				{{ obj.id }}
+				{{ obj.id }} <br/>
+				{{ selectedBy(obj.id) }}
 			</div>
 		</FreeTransform>
 	</div>
@@ -37,7 +38,7 @@ export default {
 	computed: {
 		obj() {
 			return this.$store.state.pieces[this.$props.index]
-		}
+		},
 	},
   props: {
 		index: Number,
@@ -60,8 +61,22 @@ export default {
       }
     },
 		localSelect(id, e) {
-			this.$store.commit('selectPiece', {id: this.obj.id, ...e})
+			this.$store.commit('localSelectPiece', {id: this.obj.id, ...e})
+			this.$store.commit('selectPiece', {
+				clientId: this.$store.state.localUser,
+				pieceId: this.obj.id
+			})
+			this.$io.emit('select piece', {
+				clientId: this.$store.state.localUser,
+				pieceId: this.obj.id
+			})
 		},
+		selectedBy() {
+			let id = this.$store.getters.pieceIsSelectedBy( this.obj.id )
+			if (this.$store.state.users[id])
+				return this.$store.state.users[id].name
+			return false
+		}
   }
 }
 </script>

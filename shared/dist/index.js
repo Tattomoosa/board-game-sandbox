@@ -65,6 +65,8 @@ var _default = {
            *
           */
         ],
+        userSelections: {// [clientId] : [pieceId]
+        },
         // only used locally, maybe belongs in module
         // TODO change at least to localID or clientID
         localUser: null // socketID
@@ -81,6 +83,24 @@ var _default = {
             for (var i = 0; i < state.pieces.length; i++) {
               if (state.pieces[i]) if (state.pieces[i].id == id) return state.pieces[i];
             }
+          };
+        },
+        pieceIsSelectedBy: function pieceIsSelectedBy(state) {
+          return function (pieceId) {
+            var us = state.userSelections;
+
+            var _arr = Object.keys(us);
+
+            for (var _i = 0; _i < _arr.length; _i++) {
+              var userId = _arr[_i];
+
+              if (us.hasOwnProperty(userId)) {
+                // console.log({ userId, value: us[userId] })
+                if (us[userId] == pieceId) return userId;
+              }
+            }
+
+            return false;
           };
         },
         currentUser: function currentUser(state) {
@@ -103,19 +123,6 @@ var _default = {
           _vue.default.set(state, 'users', users);
         },
         addUser: function addUser(state, userSocketId) {
-          /*
-          state.users[userSocketId] = {
-          name: 'guest',
-          id: userSocketId
-          }
-          */
-
-          /*
-          Vue.set(state.users, userSocketId, {
-          	name: 'guest',
-          	id: userSocketId
-          })
-          */
           var user = defaultUser({
             id: userSocketId
           });
@@ -158,11 +165,27 @@ var _default = {
             if (p != null) if (p.id == piece.id) state.pieces.splice(i, 1);
           }
         },
-        selectPiece: function selectPiece(state, piece) {
+        localSelectPiece: function localSelectPiece(state, piece) {
           for (var i = 0; i < state.pieces.length; i++) {
             var p = state.pieces[i];
             if (p != null) if (p.id == piece.id) p.selected = true;else p.selected = false;
           }
+        },
+        selectPiece: function selectPiece(state, _ref2) {
+          var clientId = _ref2.clientId,
+              pieceId = _ref2.pieceId;
+          // this is basically the getter
+          // TODO do this stuff in an action
+          var us = state.userSelections;
+
+          var _arr2 = Object.keys(us);
+
+          for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+            var userId = _arr2[_i2];
+            if (us.hasOwnProperty(userId)) if (us[userId] == pieceId) us[userId] = null;
+          }
+
+          _vue.default.set(state.userSelections, clientId, pieceId);
         },
         addMessage: function addMessage(state, message) {
           state.messages.push(message);

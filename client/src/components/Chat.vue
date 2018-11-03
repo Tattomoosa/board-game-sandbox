@@ -50,7 +50,9 @@ export default {
 			return this.$store.state.users
 		},
 		username() {
-			return this.$store.state.users[this.$store.state.localUser].name
+			if (this.$store.state.localUser)
+				return this.$store.state.users[this.$store.state.localUser].name
+			else return "NONAME"
 		}
 	},
   methods: {

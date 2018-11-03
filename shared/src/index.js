@@ -56,6 +56,9 @@ export default {
 					 *
 					*/
 				],
+				userSelections: {
+					// [clientId] : [pieceId]
+				},
 				// only used locally, maybe belongs in module
 				// TODO change at least to localID or clientID
 				localUser: null // socketID
@@ -71,6 +74,19 @@ export default {
 						if (state.pieces[i])
 							if (state.pieces[i].id == id)
 								return state.pieces[i]
+				},
+				pieceIsSelectedBy: state => pieceId => {
+					let us = state.userSelections
+					for (let userId of Object.keys(us))
+					{
+						if (us.hasOwnProperty(userId))
+						{
+							// console.log({ userId, value: us[userId] })
+							if (us[userId] == pieceId)
+								return userId
+						}
+					}
+					return false
 				},
 				currentUser: state => {
 					return state.users[localUser]
@@ -91,18 +107,6 @@ export default {
 					Vue.set(state,'users', users)
 				},
 				addUser (state, userSocketId) {
-						/*
-					state.users[userSocketId] = {
-						name: 'guest',
-						id: userSocketId
-					}
-					*/
-					/*
-					Vue.set(state.users, userSocketId, {
-						name: 'guest',
-						id: userSocketId
-					})
-					*/
 					let user = defaultUser({
 						id: userSocketId,
 					})
@@ -142,7 +146,7 @@ export default {
 								state.pieces.splice(i, 1)
 					}
 				},
-				selectPiece (state, piece) {
+				localSelectPiece (state, piece) {
 					for (let i = 0; i < state.pieces.length; i++) {
 						let p = state.pieces[i]
 						if (p != null)
@@ -151,6 +155,18 @@ export default {
 							else
 								p.selected = false
 					}
+				},
+				selectPiece (state, {clientId, pieceId}) {
+					// this is basically the getter
+					// TODO do this stuff in an action
+					let us = state.userSelections
+					for (let userId of Object.keys(us))
+					{
+						if (us.hasOwnProperty(userId))
+							if (us[userId] == pieceId)
+								us[userId] = null
+					}
+					Vue.set(state.userSelections, clientId, pieceId)
 				},
 				addMessage (state, message) {
 					state.messages.push(message)

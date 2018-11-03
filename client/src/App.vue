@@ -46,6 +46,9 @@ export default {
 			this.$io.on('delete piece', data => {
 				this.$store.commit('deletePiece', data)
 			})
+			this.$io.on('select piece', data => {
+				this.$store.commit('selectPiece', data)
+			})
 			this.$io.on('reset client', data => {
 				this.$store.commit('loadPieces', data.pieces)
 				this.$store.commit('loadMessages', data.messages)

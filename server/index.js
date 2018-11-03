@@ -68,6 +68,11 @@ io.on('connection', client => {
 		io.emit('delete piece', data)
 	})
 
+	client.on('select piece', data => {
+		store.commit('selectPiece', data)
+		client.broadcast.emit('select piece', data)
+	})
+
 	function resetClient() {
 		io.emit('reset client',
 			{
