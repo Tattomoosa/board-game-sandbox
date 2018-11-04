@@ -78,7 +78,7 @@ export default {
 					return state.users[localUser]
         },
         pieceSelectedByUser: (state, getters) => (userId) => {
-          let pieceId = state.userSelections[clientId]
+          let pieceId = state.userSelections[userId]
           return getters.pieceWithId(pieceId)
         }
 			},

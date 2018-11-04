@@ -1,23 +1,5 @@
-import _express from 'express'
-import _http from 'http'
-import _socketio from 'socket.io'
-import shared from '../../shared/dist/index.js'
-// remove
-// import Vue from 'vue'
-// remove
-// import Vuex from 'vuex'
-
-// console.log(shared)
-
-let app = _express()
-let http = _http.Server(app)
-let io = _socketio(http)
-
-const PORT = process.env.PORT || 4113
-
-shared.Vue.use(shared.Vuex)
-
-const store = shared.createStore()
+import { store, app, http, io } from './init'
+import parseChatCommands from './chat-commands'
 
 io.on('connection', client => {
   // Name is changeable
@@ -46,7 +28,7 @@ io.on('connection', client => {
   client.on('disconnect', () => {
     // console.log('user ' + client.id + ' disconnected')
     let message = 'User ' + store.state.users[client.id].name + ' has disconnected'
-		store.commit('removeUser', client.id)
+    // store.commit('removeUser', client.id)
     store.commit('addMessage', { message })
 		client.broadcast.emit('user disconnected', store.state.users)
 		client.broadcast.emit('message', {message})
@@ -84,40 +66,11 @@ io.on('connection', client => {
 
   client.on('send message', (data) => {
     let { message } = data
-
-    if (message.startsWith("\\setname "))
-		{
-			// CHANGE NAME
-			let name = message.slice(9)
-			store.commit('changeUsername', {name, clientId: client.id})
-			// TODO we really only need to update the user's name
-			resetClient()
-		}
-		else if (message.startsWith("\\resetclient"))
-			resetClient()
-		else if (message.startsWith("\\clearchat"))
-    {
-      store.commit('clearChat')
-			resetClient()
-    }
-    else if (message.startsWith("\\setcolor "))
-    {
-      console.log('set color')
-      let color = message.slice(10)
-      let selectedPiece = store.getters.pieceSelectedByUser(client.id)
-      if (selectedPiece)
-      {
-        store.commit('setPiece', {...selectedPiece, color})
-        io.emit('edited', {...selectedPiece, color })
-      }
-    }
+    if (parseChatCommands(client, message)) {}
     else {
-			store.commit('addMessage', data)
+      store.commit('addMessage', data)
       io.emit('message', data)
     }
   })
 })
 
-http.listen(PORT, function() {
-  console.log('listening on *: ' + PORT)
-})
