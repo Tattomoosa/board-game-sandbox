@@ -1,24 +1,32 @@
 <template>
 	<div v-if="obj != null">
 		<FreeTransform
-			:id="obj.id"
-			:x="obj.x"
-			:y="obj.y"
-			:scale-x="obj.scaleX"
-			:scale-y="obj.scaleY"
-			:width="obj.width"
-			:height="obj.height"
-			:angle="obj.angle"
-			:offset-x="obj.offsetX"
-			:offset-y="obj.offsetY"
-			:selectOn="'mousedown'"
-			:selected="locallySelected"
-			@onSelect="localSelect(obj.id, $event)"
-			@update="localUpdate(obj.id, $event)"
+    :id="obj.id"
+    :x="obj.x"
+    :y="obj.y"
+    :scale-x="obj.scaleX"
+    :scale-y="obj.scaleY"
+    :width="obj.width"
+    :height="obj.height"
+    :angle="obj.angle"
+    :offset-x="obj.offsetX"
+    :offset-y="obj.offsetY"
+    :selectOn="'mousedown'"
+    :selected="locallySelected"
+    @onSelect="localSelect(obj.id, $event)"
+    @update="localUpdate(obj.id, $event)"
 		>
-			<div class="element" :style="{width: obj.width + 'px', height: obj.height + 'px', background: obj.color}">
-				{{ obj.id }} <br/>
-				{{ selectedBy(obj.id) }}
+    <div class="element"
+    :style="{width: obj.width + 'px', height: obj.height + 'px', background: obj.color}">
+        <img
+        v-if="obj.image"
+        :src="obj.image"
+        :style="{backgroundSize: obj.backgroundSize}">
+        </img>
+        <div class="debug">
+          {{ obj.id }} <br/>
+          {{ selectedBy(obj.id) }}
+        </div>
 			</div>
 		</FreeTransform>
 	</div>
@@ -37,7 +45,17 @@ export default {
   },
 	computed: {
 		obj() {
-			return this.$store.state.pieces[this.$props.index]
+      let obj = {...this.$store.state.pieces[this.$props.index]}
+      obj.x = parseInt(obj.x)
+      obj.y = parseInt(obj.y)
+      obj.scaleX = parseFloat(obj.scaleX)
+      obj.scaleY = parseFloat(obj.scaleY)
+      obj.width = parseInt(obj.width)
+      obj.height = parseFloat(obj.height)
+      obj.angle = parseFloat(obj.angle)
+      obj.offsetX = parseInt(obj.offsetX)
+      obj.offsetY = parseInt(obj.offsetY)
+      return obj;
 		},
     locallySelected() {
       return this.$store.state.client.selected[0] == this.obj.id
@@ -85,6 +103,23 @@ export default {
 
 $size : 12px;
 $padding : $size/2;
+
+img {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.debug {
+  position: absolute;
+  background: rgba(black,0.6);
+  color: white;
+}
 
     .tr-transform--active{
         position: absolute;

@@ -17,7 +17,8 @@ let defaultPiece = (o) => {
 		offsetX: o.offsetX || 0,
 		offsetY: o.offsetY || 0,
 		selected: false,
-		image: null,
+		image: o.image || false,
+    imageBackgroundSize: o.imageBackgroundSize || 'cover',
 		remoteSelected: false,
 	}
 }

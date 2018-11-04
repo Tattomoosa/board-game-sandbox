@@ -4,16 +4,16 @@ let commands = {
   // \setprop color blue
   // changes a prop on a piece
   setprop(args, client) {
-    console.log('client is: ' + client.id)
     let selectedPiece = store.getters.pieceSelectedByUser(client.id)
     let prop = args[0]
     let value = args[1]
-    if (selectedPiece && selectedPiece[prop])
+    // console.log('selectedPiece.image is ' + selectedPiece.image)
+    if (selectedPiece && selectedPiece.hasOwnProperty(prop))
     {
       store.commit('setPiece', {...selectedPiece, [prop]: value})
       io.emit('edited', {...selectedPiece, [prop]: value })
       let message = store.state.users[client.id].name
-      message += "has set '" + prop + "' of '"
+      message += " has set the '" + prop + "' of '"
         + selectedPiece.id +"' to '" + value + "'"
       io.emit('message', { message })
     }
@@ -54,6 +54,14 @@ let commands = {
 		store.commit('addMessage', { message })
     io.emit('message', { message })
   },
+  listprops(args, client) {
+    let selectedPiece = store.getters.pieceSelectedByUser(client.id)
+    let message = 'Piece ' + selectedPiece.id + ' Props:\n'
+    for (let prop of Object.keys(selectedPiece))
+      message += prop + ': ' + selectedPiece[prop] + '\n'
+		store.commit('addMessage', { message })
+    io.emit('message', { message })
+  },
   resetclient() {
 		io.emit('reset client',
 			{
@@ -68,7 +76,7 @@ let commands = {
 function parseCommands(client, message) {
   let args = []
   let command = ''
-  console.log('parsing command: ' + message)
+  console.log('parsing command: " ' + message + ' "')
 
   if (message[0] != '\\') return false
 

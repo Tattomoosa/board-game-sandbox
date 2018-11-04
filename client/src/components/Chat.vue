@@ -149,6 +149,7 @@ $width: 300px;
       padding-bottom: 4px;
       font-family: inherit;
       line-height: 16px;
+      white-space: pre-wrap;
     }
   }
   .message:nth-child(2n) {

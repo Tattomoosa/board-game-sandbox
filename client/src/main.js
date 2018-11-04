@@ -6,6 +6,7 @@ import clientModule from '../../shared/src/vuex-modules/client.js'
 
 Vue.config.productionTip = false
 Vue.prototype.$io = io('localhost:4113')
+// Vue.prototype.$io = io('192.168.0.3:4113')
 Vue.use(shared.Vuex)
 
 const store = shared.createStore()
