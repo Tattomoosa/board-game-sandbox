@@ -77,6 +77,10 @@ export default {
 				currentUser: state => {
 					return state.users[localUser]
         },
+        pieceSelectedByUser: (state, getters) => (userId) => {
+          let pieceId = state.userSelections[clientId]
+          return getters.pieceWithId(pieceId)
+        }
 			},
 			mutations: {
 				loadPieces (state, newPieces) {

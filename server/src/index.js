@@ -100,6 +100,17 @@ io.on('connection', client => {
       store.commit('clearChat')
 			resetClient()
     }
+    else if (message.startsWith("\\setcolor "))
+    {
+      console.log('set color')
+      let color = message.slice(10)
+      let selectedPiece = store.getters.pieceSelectedByUser(client.id)
+      if (selectedPiece)
+      {
+        store.commit('setPiece', {...selectedPiece, color})
+        io.emit('edited', {...selectedPiece, color })
+      }
+    }
     else {
 			store.commit('addMessage', data)
       io.emit('message', data)
