@@ -70,6 +70,14 @@ let commands = {
 				messages: store.state.messages
 			}
 		)
+  },
+  setkitten(args, client) {
+    let width = parseInt(400 + Math.random() * 200)
+    let height = parseInt(400 + Math.random() * 200)
+    commands.setprop([
+      'image',
+      'http://placekitten.com/' + width + '/' + height
+    ],client)
   }
 }
 
