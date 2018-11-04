@@ -38,10 +38,10 @@ export default {
 
       // set up server message responses.
       this.$io.on('user connected', users => {
-        this.$store.commit('updateUsers', users)
+        this.$store.commit('loadUsers', users)
       })
       this.$io.on('user disconnected', users => {
-        this.$store.commit('updateUsers', users)
+        this.$store.commit('loadUsers', users)
       })
       // TODO: move these to some other place ('Board', 'Workspace'?)
       this.$io.on('create piece', data => {
