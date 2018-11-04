@@ -1,7 +1,7 @@
 import _express from 'express'
 import _http from 'http'
 import _socketio from 'socket.io'
-import shared from '../shared/dist/index.js'
+import shared from '../../shared/dist/index.js'
 import Vue from 'vue'
 // remove
 // import Vuex from 'vuex'
