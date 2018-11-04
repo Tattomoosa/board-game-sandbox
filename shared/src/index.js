@@ -85,13 +85,14 @@ export default {
 			},
 			mutations: {
 				loadPieces (state, newPieces) {
-					state.pieces = newPieces
+          // state.pieces = newPieces
+          Vue.set(state, 'pieces', newPieces)
 				},
 				loadMessages (state, messages) {
 					state.messages = []
 					Vue.set(state, 'messages', messages)
 				},
-				updateUsers (state, users) {
+				loadUsers (state, users) {
 					Vue.set(state,'users', users)
 				},
 				addUser (state, userSocketId) {

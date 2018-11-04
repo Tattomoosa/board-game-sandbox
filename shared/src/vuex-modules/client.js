@@ -9,8 +9,9 @@ export default {
   getters: {
     selectedPiece: (state, getters, rootState) => {
       for (let i = 0; i < rootState.pieces.length; i++)
-        if (rootState.pieces[i].selected == true)
+        if (state.selected == rootState.pieces[i].id)
           return rootState.pieces[i]
+      return false
     },
     user: (state, getters, rootState) => {
       return rootState.users[localUser]
@@ -19,6 +20,11 @@ export default {
   actions: {
     setID ({ commit }, clientId) {
       commit('setID', clientId)
+    },
+    init ({ commit }, data) {
+      commit('loadPieces', data.pieces, {root: true})
+      commit('loadMessages', data.messages,  {root: true})
+      commit('loadUsers', data.users, {root: true})
     }
   },
   mutations: {

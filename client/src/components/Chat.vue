@@ -55,10 +55,9 @@ export default {
 		username() {
 			// if (this.$store.state.localUser)
       let id = this.$store.state.client.id
-			if (id)
-				// return this.$store.state.users[this.$store.state.localUser].name
+      if (this.$store.state.users[id])
 				return this.$store.state.users[id].name
-			else return "NONAME"
+			else return id
 		}
 	},
   methods: {
