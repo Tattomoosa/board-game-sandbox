@@ -10,9 +10,7 @@
         <div v-else class="username">
           Server Message
         </div>
-        <div class="contents">
-          {{ msg.message }}
-        </div>
+        <pre class="contents">{{ msg.message }}</pre>
       </div>
     </div>
     <div class="chat-form">
@@ -146,8 +144,11 @@ $width: 300px;
     }
     .contents {
       font-size: 12px;
-      margin-left: 20px;
+      // margin-left: 20px;
+      padding-left: 0;
       padding-bottom: 4px;
+      font-family: inherit;
+      line-height: 16px;
     }
   }
   .message:nth-child(2n) {
