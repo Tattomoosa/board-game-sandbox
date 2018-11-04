@@ -1,5 +1,6 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
+import client from './vuex-modules/client.js'
 
 // Spread operator isn't working TODO check if this is fixed now
 let defaultPiece = (o) => {
@@ -17,7 +18,6 @@ let defaultPiece = (o) => {
 		offsetY: o.offsetY || 0,
 		selected: false,
 		image: null,
-		// for later
 		remoteSelected: false,
 	}
 }
@@ -35,33 +35,24 @@ export default {
 	Vue: Vue,
 	createStore() {
 		return new Vuex.Store({
+      modules: {
+        // client
+      },
 			state: {
-				pieces: [
-				],
-				users: {
-					/*
-					 * [socket id] : {
-					 *		id:
-					 *		name:
-					 * }
-					 *
-					*/
-				},
+        // split into module?
+				pieces: [],
+				users: {},
 				messages: [
 					/*
 					 * {
 					 *		socketID: user's socket id
 					 *		message: message contents
 					 * }
-					 *
 					*/
 				],
 				userSelections: {
 					// [clientId] : [pieceId]
 				},
-				// only used locally, maybe belongs in module
-				// TODO change at least to localID or clientID
-				localUser: null // socketID
 			},
 			getters: {
 				localSelectedPiece: state => {
@@ -78,14 +69,9 @@ export default {
 				pieceIsSelectedBy: state => pieceId => {
 					let us = state.userSelections
 					for (let userId of Object.keys(us))
-					{
 						if (us.hasOwnProperty(userId))
-						{
-							// console.log({ userId, value: us[userId] })
 							if (us[userId] == pieceId)
 								return userId
-						}
-					}
 					return false
 				},
 				currentUser: state => {
@@ -99,9 +85,6 @@ export default {
 				loadMessages (state, messages) {
 					state.messages = []
 					Vue.set(state, 'messages', messages)
-				},
-				setLocalUser (state, clientId) {
-					Vue.set(state, 'localUser', clientId)
 				},
 				updateUsers (state, users) {
 					Vue.set(state,'users', users)
@@ -118,8 +101,6 @@ export default {
 					let user = state.users[clientId]
 					if (user) {
 						let previousName = user.name || '[ no previous name ]'
-						// state.users[clientId].name = name
-						// Vue.set(state.users[clientId], 'name', name)
 						Vue.set(user, 'name', name)
 						console.log(previousName + ' is now known as ' + user.name)
 					} else {
@@ -146,26 +127,12 @@ export default {
 								state.pieces.splice(i, 1)
 					}
 				},
-				localSelectPiece (state, piece) {
-					for (let i = 0; i < state.pieces.length; i++) {
-						let p = state.pieces[i]
-						if (p != null)
-							if (p.id == piece.id)
-								p.selected = true
-							else
-								p.selected = false
-					}
-				},
 				selectPiece (state, {clientId, pieceId}) {
-					// this is basically the getter
-					// TODO do this stuff in an action
 					let us = state.userSelections
 					for (let userId of Object.keys(us))
-					{
 						if (us.hasOwnProperty(userId))
 							if (us[userId] == pieceId)
 								us[userId] = null
-					}
 					Vue.set(state.userSelections, clientId, pieceId)
 				},
 				addMessage (state, message) {

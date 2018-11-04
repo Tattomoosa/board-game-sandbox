@@ -2,7 +2,8 @@ import _express from 'express'
 import _http from 'http'
 import _socketio from 'socket.io'
 import shared from '../../shared/dist/index.js'
-import Vue from 'vue'
+// remove
+// import Vue from 'vue'
 // remove
 // import Vuex from 'vuex'
 
@@ -13,14 +14,6 @@ let http = _http.Server(app)
 let io = _socketio(http)
 
 const PORT = process.env.PORT || 4113
-
-  /*
-app.use(_express.static('client'))
-
-app.get('/', function(req, res) {
-  // res.sendFile(__dirname + '/client/index.html')
-})
-*/
 
 shared.Vue.use(shared.Vuex)
 
@@ -49,10 +42,10 @@ io.on('connection', client => {
 
   // TODO right now resets users instead of just removing the one that
   // disconnected.  This is wasteful. Should users even be removed?
-  // maybe better to set active: false 
+  // maybe better to set active: false?
   client.on('disconnect', () => {
     // console.log('user ' + client.id + ' disconnected')
-    let message = '// user ' + store.state.users[client.id].name + ' has disconnected'
+    let message = 'User ' + store.state.users[client.id].name + ' has disconnected'
 		store.commit('removeUser', client.id)
     store.commit('addMessage', { message })
 		client.broadcast.emit('user disconnected', store.state.users)

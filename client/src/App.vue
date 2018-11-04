@@ -29,8 +29,9 @@ export default {
 			this.$store.commit('loadPieces', data.pieces)
 			this.$store.commit('loadMessages', data.messages)
 			this.$store.commit('updateUsers', data.users)
-			this.$store.commit('setLocalUser', data.clientId)
-			console.log(this.$store.state.localUser)
+			// this.$store.commit('setLocalUser', data.clientId)
+			// this.$store.commit('setID', data.clientId)
+      this.$store.dispatch('client/setID', data.clientId)
 
 			// set up server message responses.
 			this.$io.on('user connected', users => {

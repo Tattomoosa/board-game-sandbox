@@ -55,15 +55,18 @@ export default {
 			return this.$store.state.users
 		},
 		username() {
-			if (this.$store.state.localUser)
-				return this.$store.state.users[this.$store.state.localUser].name
+			// if (this.$store.state.localUser)
+      let id = this.$store.state.client.id
+			if (id)
+				// return this.$store.state.users[this.$store.state.localUser].name
+				return this.$store.state.users[id].name
 			else return "NONAME"
 		}
 	},
   methods: {
     sendMessage(e) {
       this.$io.emit('send message', {
-				socketId: this.$store.state.localUser,
+				socketId: this.$store.state.client.id,
         message: this.message
       })
       this.message = ''

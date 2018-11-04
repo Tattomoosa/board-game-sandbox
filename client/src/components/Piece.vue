@@ -12,7 +12,7 @@
 			:offset-x="obj.offsetX"
 			:offset-y="obj.offsetY"
 			:selectOn="'mousedown'"
-			:selected="obj.selected"
+			:selected="locallySelected"
 			@onSelect="localSelect(obj.id, $event)"
 			@update="localUpdate(obj.id, $event)"
 		>
@@ -39,6 +39,9 @@ export default {
 		obj() {
 			return this.$store.state.pieces[this.$props.index]
 		},
+    locallySelected() {
+      return this.$store.state.client.selected[0] == this.obj.id
+    }
 	},
   props: {
 		index: Number,
@@ -59,13 +62,13 @@ export default {
         this.update(e)
     },
 		localSelect(id, e) {
-			this.$store.commit('localSelectPiece', {id: this.obj.id, ...e})
+			this.$store.commit('client/selectPiece', {id: this.obj.id, ...e})
 			this.$store.commit('selectPiece', {
-				clientId: this.$store.state.localUser,
+				clientId: this.$store.state.client.id,
 				pieceId: this.obj.id
 			})
 			this.$io.emit('select piece', {
-				clientId: this.$store.state.localUser,
+				clientId: this.$store.state.client.id,
 				pieceId: this.obj.id
 			})
 		},
