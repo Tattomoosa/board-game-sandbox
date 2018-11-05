@@ -67,6 +67,8 @@ export default {
 							if (state.pieces[i].id == id)
 								return state.pieces[i]
 				},
+        // TODO rename
+        // getUserSelectingPiece (pieceId)
 				pieceIsSelectedBy: state => pieceId => {
 					let us = state.userSelections
 					for (let userId of Object.keys(us))
@@ -78,6 +80,8 @@ export default {
 				currentUser: state => {
 					return state.users[localUser]
         },
+        // TODO rename
+        // getPieceSelectedByUser
         pieceSelectedByUser: (state, getters) => (userId) => {
           let pieceId = state.userSelections[userId]
           return getters.pieceWithId(pieceId)
@@ -134,6 +138,7 @@ export default {
 					}
 				},
 				selectPiece (state, {clientId, pieceId}) {
+          console.log('root select piece', clientId, pieceId)
 					let us = state.userSelections
 					for (let userId of Object.keys(us))
 						if (us.hasOwnProperty(userId))

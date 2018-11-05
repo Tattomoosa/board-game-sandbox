@@ -49,9 +49,12 @@ io.on('connection', client => {
 		io.emit('delete piece', data)
 	})
 
-	client.on('select piece', data => {
+	client.on('select piece', pieceId => {
+    let data = { clientId: client.id, pieceId }
 		store.commit('selectPiece', data)
-		client.broadcast.emit('select piece', data)
+    console.log('user ' + client.id + ' selected piece ' + pieceId)
+    // client.broadcast.emit('select piece', pieceId)
+    client.broadcast.emit('select piece', data)
 	})
 
 	function resetClient() {

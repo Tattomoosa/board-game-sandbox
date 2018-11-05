@@ -24,17 +24,10 @@ export default {
   },
   mounted() {
     this.$io.emit('ready')
+    // TODO destructure data?
     this.$io.on('init client', data => {
       console.log('loading state from server')
-      this.$store.dispatch('client/setID', data.clientId)
-      /*
-      this.$store.commit('loadPieces', data.pieces)
-      this.$store.commit('loadMessages', data.messages)
-      this.$store.commit('updateUsers', data.users)
-      */
-      this.$store.dispatch('client/init', data)
-      // this.$store.commit('setLocalUser', data.clientId)
-      // this.$store.commit('setID', data.clientId)
+      this.$store.dispatch('client/init', {...data, io: this.$io })
 
       // set up server message responses.
       this.$io.on('user connected', users => {
@@ -55,6 +48,7 @@ export default {
           this.$io.emit('send message', {message: '\\resetclient'})
       })
       this.$io.on('select piece', data => {
+        console.log('app.vue: ', data)
         this.$store.commit('selectPiece', data)
       })
       this.$io.on('reset client', data => {

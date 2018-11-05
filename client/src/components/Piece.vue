@@ -25,7 +25,7 @@
         </img>
         <div class="debug">
           {{ obj.id }} <br/>
-          {{ selectedBy(obj.id) }}
+          {{ selectedBy }}
         </div>
 			</div>
 		</FreeTransform>
@@ -59,7 +59,18 @@ export default {
 		},
     locallySelected() {
       return this.$store.state.client.selected[0] == this.obj.id
-    }
+    },
+		selectedBy() {
+      // TODO: This doesn't update the view correctly. Seems not to be running when it should
+      // console.log('"selected by" running on piece' + this.obj.id)
+			let userId = this.$store.getters.pieceIsSelectedBy( this.obj.id )
+      if (userId)
+        if (this.$store.state.users[userId])
+          return this.$store.state.users[userId].name
+        else
+          console.warn('piece ' + this.obj.id + ' is selected by an unknown user')
+			return false
+		}
 	},
   props: {
 		index: Number,
@@ -67,7 +78,6 @@ export default {
   },
   methods: {
     update(e) {
-      // this.obj = { ...this.obj, ...e }
 			this.$store.commit('setPiece', { ...this.obj, ...e })
     },
     localUpdate(id, e) {
@@ -75,26 +85,11 @@ export default {
       this.$io.emit('edited', {id: this.obj.id, ...e})
     },
     serverUpdate(e) {
-      // console.log({1: e.id, 2: this.obj.id})
       if (e.id === this.obj.id)
         this.update(e)
     },
-		localSelect(id, e) {
-			this.$store.commit('client/selectPiece', {id: this.obj.id, ...e})
-			this.$store.commit('selectPiece', {
-				clientId: this.$store.state.client.id,
-				pieceId: this.obj.id
-			})
-			this.$io.emit('select piece', {
-				clientId: this.$store.state.client.id,
-				pieceId: this.obj.id
-			})
-		},
-		selectedBy() {
-			let id = this.$store.getters.pieceIsSelectedBy( this.obj.id )
-			if (this.$store.state.users[id])
-				return this.$store.state.users[id].name
-			return false
+    localSelect(id, e) {
+      this.$store.dispatch('client/selectPiece', this.obj.id)
 		}
   }
 }

@@ -38,12 +38,6 @@ export default {
       // this.messages.push(data)
 			this.$store.commit('addMessage', data)
     })
-/*
-    this.$io.on('namechange', data => {
-      // this.messages.push(data)
-      this.username = data.name
-    })
-*/
   },
 	computed: {
 		messages() {
@@ -53,7 +47,6 @@ export default {
 			return this.$store.state.users
 		},
 		username() {
-			// if (this.$store.state.localUser)
       let id = this.$store.state.client.id
       if (this.$store.state.users[id])
 				return this.$store.state.users[id].name

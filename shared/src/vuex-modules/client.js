@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     id: null,
+    io:{},
     selected: []
   },
   getters: {
@@ -22,9 +23,26 @@ export default {
       commit('setID', clientId)
     },
     init ({ commit }, data) {
-      commit('loadPieces', data.pieces, {root: true})
-      commit('loadMessages', data.messages,  {root: true})
-      commit('loadUsers', data.users, {root: true})
+      commit('setID', data.clientId)
+      commit('setIO', data.io)
+      commit('loadPieces', data.pieces, { root: true })
+      commit('loadMessages', data.messages,  { root: true })
+      commit('loadUsers', data.users, { root: true })
+    },
+    reset ({ commit }, data) {
+      commit('loadPieces', data.pieces, { root: true })
+      commit('loadMessages', data.messages, { root: true })
+      commit('loadUsers', data.users, { root: true })
+    },
+    selectPiece ({ state, commit }, pieceId) {
+      let data = {
+        clientId: state.id,
+        pieceId: pieceId
+      }
+      console.log('client select piece', data)
+      commit('selectPiece', pieceId)
+      commit('selectPiece', data, { root: true })
+      state.io.emit('select piece', pieceId)
     }
   },
   mutations: {
@@ -32,8 +50,11 @@ export default {
     setID (state, clientId) {
       Vue.set(state, 'id', clientId)
     },
-    selectPiece (state, piece, rootState) {
-      Vue.set(state, 'selected', [piece.id])
+    selectPiece (state, pieceId, rootState) {
+      Vue.set(state, 'selected', [pieceId])
+    },
+    setIO (state, io) {
+      Vue.set(state, 'io', io)
     }
-  }
+  },
 }
