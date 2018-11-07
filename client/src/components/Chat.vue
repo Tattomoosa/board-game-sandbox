@@ -18,10 +18,10 @@
         <p class="username">name: {{ username }}</p>
         <input type="text" v-model="message"></input>
         <input type="submit" value="Send"></button>
-      </form>
-    </div>
+    </form>
   </div>
-  <input v-else type="button" class="show-chat-button" value="Chat" v-on:click="active=!active"></input>
+</div>
+<input v-else type="button" class="show-chat-button" value="Chat" v-on:click="active=!active"></input>
 </template>
 
 <script>
@@ -35,28 +35,27 @@ export default {
   },
   mounted() {
     this.$io.on('message', data => {
-      // this.messages.push(data)
-			this.$store.commit('addMessage', data)
+      this.$store.commit('addMessage', data)
     })
   },
-	computed: {
-		messages() {
-			return this.$store.state.messages
-		},
-		users() {
-			return this.$store.state.users
-		},
-		username() {
+  computed: {
+    messages() {
+      return this.$store.state.messages
+    },
+    users() {
+      return this.$store.state.users
+    },
+    username() {
       let id = this.$store.state.client.id
       if (this.$store.state.users[id])
-				return this.$store.state.users[id].name
-			else return id
-		}
-	},
+        return this.$store.state.users[id].name
+      else return id
+    }
+  },
   methods: {
     sendMessage(e) {
       this.$io.emit('send message', {
-				socketId: this.$store.state.client.id,
+        socketId: this.$store.state.client.id,
         message: this.message
       })
       this.message = ''

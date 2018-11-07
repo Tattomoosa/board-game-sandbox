@@ -84,7 +84,7 @@ let commands = {
 function parseCommands(client, message) {
   let args = []
   let command = ''
-  console.log('parsing command: " ' + message + ' "')
+  console.log('parsing command: "' + message + '"\n from client id: ' + client.id)
 
   if (message[0] != '\\') return false
 

@@ -27,7 +27,7 @@ export default {
     // TODO destructure data?
     this.$io.on('init client', data => {
       console.log('loading state from server')
-      this.$store.dispatch('client/init', {...data, io: this.$io })
+      this.$store.dispatch('client/init', { ...data, io: this.$io  })
 
       // set up server message responses.
       this.$io.on('user connected', users => {
@@ -36,23 +36,24 @@ export default {
       this.$io.on('user disconnected', users => {
         this.$store.commit('loadUsers', users)
       })
-      // TODO: move these to some other place ('Board', 'Workspace'?)
+      // TODO: move this to some other place ('Board', 'Workspace'?)
       this.$io.on('create piece', data => {
         this.$store.commit('createPiece', data)
       })
+      // TODO: move this to some other place ('Board', 'Workspace'?)
       this.$io.on('delete piece', data => {
         this.$store.commit('deletePiece', data)
         // This fixes a strange rotation bug but there's probably a better way
         // TODO: find the better way
         if (this.$store.state.pieces.length < 1)
-          this.$io.emit('send message', {message: '\\resetclient'})
+          this.$io.emit('send message', { message: '\\resetclient' })
       })
       this.$io.on('select piece', data => {
         console.log('app.vue: ', data)
         this.$store.commit('selectPiece', data)
       })
       this.$io.on('reset client', data => {
-        this.$store.dispatch('client/init', data)
+        this.$store.dispatch('client/reset', data)
       })
     })
   },

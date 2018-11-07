@@ -19,9 +19,6 @@ export default {
     }
   },
   actions: {
-    setID ({ commit }, clientId) {
-      commit('setID', clientId)
-    },
     init ({ commit }, data) {
       commit('setID', data.clientId)
       commit('setIO', data.io)
