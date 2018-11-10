@@ -14,7 +14,7 @@
     :selectOn="'mousedown'"
     :selected="locallySelected"
     @onSelect="localSelect(obj.id, $event)"
-    @update="localUpdate(obj.id, $event)"
+    @update="localUpdate($event)"
 		>
     <div class="element"
     :style="{width: obj.width + 'px', height: obj.height + 'px', background: obj.color}">
@@ -39,9 +39,6 @@ export default {
     FreeTransform
   },
   mounted() {
-    this.$io.on('edited', data => {
-      this.serverUpdate(data)
-    })
   },
 	computed: {
 		obj() {
@@ -77,17 +74,21 @@ export default {
     object: Object,
   },
   methods: {
+		// This should happen in parent.
+		/*
     update(e) {
 			this.$store.commit('setPiece', { ...this.obj, ...e })
     },
-    localUpdate(id, e) {
-      this.update(e)
-      this.$io.emit('edited', {id: this.obj.id, ...e})
+		*/
+    localUpdate(e) {
+			this.$store.dispatch('client/editPiece', { ...this.obj, ...e })
     },
+		/*
     serverUpdate(e) {
       if (e.id === this.obj.id)
         this.update(e)
     },
+		*/
     localSelect(id, e) {
       this.$store.dispatch('client/selectPiece', this.obj.id)
 		}
@@ -116,84 +117,83 @@ img {
   color: white;
 }
 
-    .tr-transform--active{
-        position: absolute;
-        z-index: 5;
-    }
-    .tr-transform__content{
-        user-select: none;
-    }
-    .tr-transform__rotator {
-        top: -45px;
-        left: calc(50% - 7px);
-    }
+.tr-transform--active{
+	position: absolute;
+	z-index: 5;
+}
+.tr-transform__content{
+	user-select: none;
+}
+.tr-transform__rotator {
+	top: -45px;
+	left: calc(50% - 7px);
+}
 
-    .tr-transform__rotator,
-    .tr-transform__scale-point {
-        background: rgba(255, 255, 255, 0.8);
-        width: $size;
-        height: $size;
-        border-radius: 50%;
-        position: absolute;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-        // border: 1px solid rgba(255, 255, 255, 0.4);
-        cursor: pointer;
-    }
+.tr-transform__rotator,
+.tr-transform__scale-point {
+	background: rgba(255, 255, 255, 0.8);
+	width: $size;
+	height: $size;
+	border-radius: 50%;
+	position: absolute;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+	// border: 1px solid rgba(255, 255, 255, 0.4);
+	cursor: pointer;
+}
 
-    .tr-transform__rotator:hover,
-    .tr-transform__scale-point:hover {
-        background: #ccc;
-    }
+.tr-transform__rotator:hover,
+.tr-transform__scale-point:hover {
+	background: #ccc;
+}
 
-    .tr-transform__rotator:active,
-    .tr-transform__scale-point:active {
-        background: #ccc;
-    }
+.tr-transform__rotator:active,
+.tr-transform__scale-point:active {
+	background: #ccc;
+}
 
-    .tr-transform__scale-point {
+.tr-transform__scale-point {
+}
 
-    }
+.tr-transform__scale-point--tl {
+	top: -7px;
+	left: -7px;
+}
 
-    .tr-transform__scale-point--tl {
-        top: -7px;
-        left: -7px;
-    }
+.tr-transform__scale-point--ml {
+	top: calc(50% - 7px);
+	left: -7px;
+}
 
-    .tr-transform__scale-point--ml {
-        top: calc(50% - 7px);
-        left: -7px;
-    }
+.tr-transform__scale-point--tr {
+	left: calc(100% - 7px);
+	top: -7px;
+}
 
-    .tr-transform__scale-point--tr {
-        left: calc(100% - 7px);
-        top: -7px;
-    }
+.tr-transform__scale-point--tm {
+	left: calc(50% - 7px);
+	top: -7px;
+}
 
-    .tr-transform__scale-point--tm {
-        left: calc(50% - 7px);
-        top: -7px;
-    }
+.tr-transform__scale-point--mr {
+	left: calc(100% - 7px);
+	top: calc(50% - 7px);
+}
 
-    .tr-transform__scale-point--mr {
-        left: calc(100% - 7px);
-        top: calc(50% - 7px);
-    }
+.tr-transform__scale-point--bl {
+	left: -7px;
+	top: calc(100% - 7px);
+}
 
-    .tr-transform__scale-point--bl {
-        left: -7px;
-        top: calc(100% - 7px);
-    }
+.tr-transform__scale-point--bm {
+	left: calc(50% - 7px);
+	top: calc(100% - 7px);
+}
 
-    .tr-transform__scale-point--bm {
-        left: calc(50% - 7px);
-        top: calc(100% - 7px);
-    }
-
-    .tr-transform__scale-point--br {
-        left: calc(100% - 7px);
-        top: calc(100% - 7px);
-    }
-		.tr-transform__controls {
-			cursor: move;
-		}
+.tr-transform__scale-point--br {
+	left: calc(100% - 7px);
+	top: calc(100% - 7px);
+}
+.tr-transform__controls {
+	cursor: move;
+}
 </style>
