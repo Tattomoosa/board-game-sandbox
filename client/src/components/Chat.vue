@@ -1,7 +1,12 @@
 <template>
-  <div class="chat-window" v-if="active">
+	<div class="chat-window" v-if="active" :style="{ width: activeWidth }">
     <h4>Chat</h4>
-    <input type="button" class="show-chat-button" value="Hide" v-on:click="active=!active"></input>
+		<input
+		type="button"
+		class="show-chat-button"
+		value="Hide"
+		v-on:click="active=!active"
+		></input>
     <div class="chat-scroll">
       <div class="message" v-for="(msg, index) in messages" :key="index">
         <div v-if="users[msg.socketId]" class="username">
@@ -33,6 +38,9 @@ export default {
       active: true
     }
   },
+	props: {
+		activeWidth: String
+	},
   mounted() {
     this.$io.on('message', data => {
       this.$store.commit('addMessage', data)

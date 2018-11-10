@@ -40,7 +40,12 @@ export default {
       commit('selectPiece', pieceId)
       commit('selectPiece', data, { root: true })
       state.io.emit('select piece', pieceId)
-    }
+		},
+		editPiece ({ state, commit }, pieceEvent)
+		{
+			commit('setPiece', pieceEvent, { root: true })
+			state.io.emit('edited', pieceEvent )
+		}
   },
   mutations: {
     // sets client id

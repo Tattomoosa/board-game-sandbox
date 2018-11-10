@@ -2,25 +2,29 @@
   <div id="app">
     <input type="button" v-on:click="createPiece" value="+"></input>
     <input type="button" v-on:click="deletePiece" value="x"></input>
-    <div class="piece" v-for="(piece, index) in $store.state.pieces" :key="index">
-      <!-- <Piece :object="obj" /> -->
+		<WorkArea />
+		<!--
+    <div v-for="(piece, index) in $store.state.pieces" :key="index">
       <Piece :object="piece" :index="index" />
     </div>
-    <Chat />
+		-->
+    <Chat active-width="300px" />
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
 import Chat from './components/Chat.vue'
-import Piece from './components/Piece.vue'
+// import Piece from './components/Piece.vue'
+import WorkArea from './components/WorkArea.vue'
 
 export default {
   name: 'app',
   components: {
     // HelloWorld,
     Chat,
-    Piece
+		WorkArea,
+    // Piece
   },
   mounted() {
     this.$io.emit('ready')
