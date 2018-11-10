@@ -78,7 +78,15 @@ let commands = {
       'image',
       'http://placekitten.com/' + width + '/' + height
     ],client)
-  }
+	},
+	setpuppy(args, client) {
+    let width = parseInt(400 + Math.random() * 200)
+    let height = parseInt(400 + Math.random() * 200)
+    commands.setprop([
+      'image',
+			'http://placepuppy.net/' + width + '/' + height
+    ],client)
+	}
 }
 
 function parseCommands(client, message) {
