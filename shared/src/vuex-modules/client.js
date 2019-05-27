@@ -36,7 +36,7 @@ export default {
         clientId: state.id,
         pieceId: pieceId
       }
-      console.log('client select piece', data)
+      // console.log('client select piece', data)
       commit('selectPiece', pieceId)
       commit('selectPiece', data, { root: true })
       state.io.emit('select piece', pieceId)

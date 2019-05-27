@@ -53,11 +53,19 @@ export default {
           this.$io.emit('send message', { message: '\\resetclient' })
       })
       this.$io.on('select piece', data => {
-        console.log('app.vue: ', data)
+        // console.log('app.vue: ', data)
         this.$store.commit('selectPiece', data)
       })
       this.$io.on('reset client', data => {
         this.$store.dispatch('client/reset', data)
+      })
+      this.$io.on('dirty state', data => {
+        for (let i = 0; i < data.length; ++i) {
+          let datum = data[i]
+          if (datum.type == 'edited') {
+            this.$store.commit('setPiece', datum)
+          }
+        }
       })
     })
   },

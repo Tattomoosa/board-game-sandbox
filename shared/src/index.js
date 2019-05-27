@@ -43,17 +43,19 @@ export default {
         // split into module?
         pieces: [],
         users: {},
+        // chat messages
         messages: [
-          /*
-           * {
-           *		socketID: user's socket id
-           *		message: message contents
-           * }
-           */
+          // {
+          //	socketID: user's socket id
+          //	message: message contents
+          // }
         ],
         userSelections: {
           // [clientId] : [pieceId]
         },
+        // state that hasn't been communicated yet
+        dirtyState: [
+        ]
       },
       getters: {
         localSelectedPiece: state => {
@@ -85,9 +87,33 @@ export default {
         pieceSelectedByUser: (state, getters) => (userId) => {
           let pieceId = state.userSelections[userId]
           return getters.pieceWithId(pieceId)
-        }
+        },
       },
       mutations: {
+        sendDirtyState (state, broadcaster) {
+          if (state.dirtyState.length == 0) {
+            // console.log('dirty state empty')
+            return
+          }
+          // console.log('dirty state length', state.dirtyState.length)
+          // console.log('sending dirty state', state.dirtyState)
+          broadcaster.emit('dirty state', state.dirtyState)
+          state.dirtyState = []
+        },
+        pushDirtyState (state, message) {
+          let replace = false;
+          if (message.type == 'edited') {
+            for (let i = 0; i < state.dirtyState.length; ++i) {
+              let previous = state.dirtyState[i]
+              if (previous.id == message.id) {
+                previous = message
+                replace = true
+              }
+            }
+          }
+          if (!replace)
+            state.dirtyState.push(message)
+        },
         loadPieces (state, newPieces) {
           // state.pieces = newPieces
           Vue.set(state, 'pieces', newPieces)
